@@ -1,0 +1,13 @@
+<div class = "align-items-center d-flex h-100">
+    <div class = "px-3">
+        <span class = "pl-2">{{inputText}}&nbsp;</span>
+        <input class = "pr-2" type = "text"
+         pInputText [(ngModel)] = "tourName"/>    
+    </div>
+    <div class = "pl-2">
+        <button class = "btn btn-success" type = "button"
+         (click) = "searchTour()" [disabled] = "!tourName">
+           {{buttonText}}
+        </button>
+    </div>
+</div>

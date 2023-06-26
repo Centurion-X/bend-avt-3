@@ -1,0 +1,8 @@
+<div>
+    <div class = "d-flex flex-column mt-2">
+        <p class = "px-2">{{menuText}}</p>
+        <p-dropdown class = "pl-2"
+         [(ngModel)] = "menuType" (onChange) = "changeType($event)"
+         optionLabel = "label" [options] = "menuTypes"></p-dropdown>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+aside
+{
+    border: 1px solid #808080;
+    min-width: 300px;
+}
+footer, header
+{
+    background-color: #F8F9FA;
+    min-height: 60px; width: 100%;
+}
+main
+{
+    overflow: hidden;
+}
+@media screen and (max-width: 480px)
+{
+    aside {display: none}
+}
