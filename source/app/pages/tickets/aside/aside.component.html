@@ -1,0 +1,31 @@
+<div>
+    <div class = "d-flex flex-column mt-2">
+        <p class = "px-2">{{menuText}}</p>
+        <p-dropdown class = "pl-2"
+         [(ngModel)] = "menuType" (onChange) = "changeMenuType($event)"
+         optionLabel = "label" [options] = "menuTypes"></p-dropdown>
+    </div>
+    <div class = "mt-2">
+        <p class = "px-2">{{filterText}}</p>
+        <p-dropdown class = "pl-2"
+         (onChange) = "changeTourType($event)"
+         optionLabel = "label" [options] = "tourTypes"></p-dropdown>
+    </div>
+    <div class = "mt-2">
+        <p class = "px-2">{{dateText}}</p>
+        <p-calendar class = "pl-2"
+         (onSelect) = "selectDate($event)"></p-calendar>
+    </div>
+    <div class= "mt-2">
+        <button class = "btn btn-success ml-2 red" type = "submit"
+         (click) = "initError()">Генерация ошибки</button>
+    </div>
+    <div class= "mt-2">
+        <button class = "btn btn-success ml-2 green" type = "submit"
+         (click) = "changeTheme()">Поменять тему</button>
+    </div>
+    <div class= "mt-2">
+        <button class = "btn btn-success ml-2 green" type = "submit"
+         (click) = "initSettings()">Обновить настройки</button>
+    </div>
+</div>

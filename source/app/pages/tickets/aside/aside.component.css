@@ -1,0 +1,12 @@
+button
+{
+    min-width: 200px;
+}
+button.green
+{
+    background-color: green;
+}
+button.red
+{
+    background-color: red;
+}

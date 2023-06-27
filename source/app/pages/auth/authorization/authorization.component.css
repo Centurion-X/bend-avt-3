@@ -1,0 +1,14 @@
+*.input-error
+{
+    border: 1px solid red !important;
+}
+*.input-wrap span
+{
+    display: inline-block;
+    width: 150px;
+}
+p
+{
+    margin-right: 7.5rem;
+    margin-top: 2.75rem;
+}
