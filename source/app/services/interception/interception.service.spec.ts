@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { InterceptionService } from './interception.service';
 
 describe('InterceptionService', () =>

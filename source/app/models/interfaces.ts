@@ -11,6 +11,27 @@ export interface IMenuType
     type: string
 }
 
+export interface IOrder
+{
+    age?: string | null,
+    birthDay: string | null,
+    cardNumber: string | null,
+    firstName: string,
+    lastName: string,
+    tourId: string,
+    userId: string | null
+}
+
+export interface IOrderStatistic
+{
+    birthYear?: string | null,
+    cardNumber?: string | null,
+    client: string,
+    mail?: string | undefined,
+    price: string | undefined,
+    tour: string | undefined
+}
+
 export interface ISettings
 {
     token: boolean
@@ -21,7 +42,8 @@ export interface ITour
     date: string;
     description: string;
     id: string;
-    img: string;
+    _id?: string;
+    image: string;
     name: string;
     price: string;
     tourOperator: string;
@@ -50,6 +72,7 @@ export interface ITourTypeSelect
 export interface IUser
 {
     card?: string;
+    _id?: string;
     login: string;
     mail?: string;
     password: string;

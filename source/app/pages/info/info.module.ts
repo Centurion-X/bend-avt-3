@@ -7,6 +7,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { CarouselModule } from 'primeng/carousel';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 // import from application files
 import { InfoRoutingModule } from './info-routing.module';
 import { TicketComponent } from './ticket/ticket.component';
@@ -23,8 +25,10 @@ import { TicketComponent } from './ticket/ticket.component';
     InfoRoutingModule,
     InputNumberModule,
     InputTextModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+    ToastModule
+  ],
+  providers: [MessageService]
 })
 
 export class InfoModule {}

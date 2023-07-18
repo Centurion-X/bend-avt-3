@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 // import from PrimeNG library
 import { MessageService } from 'primeng/api';
 // import from application files
-import { IMenuType, ITourTypeSelect } from '../../../models/interfaces';
+import { IMenuType, ITour, ITourTypeSelect } from '../../../models/interfaces';
 import { SettingsService } from '../../../services/settings/settings.service';
 import { TicketService } from '../../../services/ticket/ticket.service';
 
@@ -39,6 +39,7 @@ export class AsideComponent implements OnInit
       {type: 'normal', label: 'Обычное'},
       {type: 'extend', label: 'Широкое'}
     ];
+    this.menuType = this.menuTypes[1];
   }
   changeMenuType(event: {event: Event, value: IMenuType}): void
   {
@@ -63,6 +64,10 @@ export class AsideComponent implements OnInit
   {
     this.ticketService.updateTours(event.value);
   }
+  deleteAllTours(): void
+  {
+    this.ticketService.deleteTours();
+  }
   initError(): void
   {
     this.ticketService.getError().subscribe
@@ -74,6 +79,14 @@ export class AsideComponent implements OnInit
   initSettings(): void
   {
     this.settingsService.loadSettingsSubject({token: false});
+  }
+  initTour(id: string): void
+  {
+    this.ticketService.getTourById(id).subscribe((data: ITour) => {});
+  }
+  initTours(): void
+  {
+    this.ticketService.createTours();
   }
   selectDate(event: string): void
   {

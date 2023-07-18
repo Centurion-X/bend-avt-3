@@ -1,7 +1,8 @@
 // import from Angular framework
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 // import from application files
-import { ICustomStatisticUser } from '../../../models/pseudostatistic';
+import { IOrderStatistic } from '../../../models/interfaces';
 import { StatisticService } from '../../../services/statistic/statistic.service';
 
 @Component
@@ -13,21 +14,23 @@ import { StatisticService } from '../../../services/statistic/statistic.service'
 
 export class StatisticComponent implements OnInit
 {
-  columns =
+  public columns =
   [
-    {field: 'name', header: 'Имя'},
-    {field: 'company', header: 'Компания'},
-    {field: 'phone', header: 'Телефон'},
-    {field: 'city', header: 'Город'},
-    {field: 'street', header: 'Улица'}
+    {field: 'client', header: 'Клиент'},
+    // {field: 'mail', header: 'Почта'},
+    {field: 'birthYear', header: 'Год рождения'},
+    {field: 'tour', header: 'Тур'},
+    {field: 'price', header: 'Стоимость'}
   ];
-  users: Array<ICustomStatisticUser>;
-  constructor(private statisticService: StatisticService){}
+  public orders: Array<any>;
+  constructor(private date: DatePipe,
+              private statisticService: StatisticService){}
   ngOnInit(): void
   {
-    this.statisticService.getStatistic().subscribe((data: Array<ICustomStatisticUser>) =>
+    this.statisticService.getStatistic().subscribe((data: Array<IOrderStatistic>) =>
     {
-      this.users = data;
+      data.forEach((order: IOrderStatistic) => order.birthYear = this.date.transform(order.birthYear, 'YYYY'));
+      this.orders = data;
     });
   }
 }

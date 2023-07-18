@@ -11,6 +11,9 @@ import { TicketRestService } from '../rest/ticket/ticket-rest.service';
 export class TicketService
 {
   private ticketSubject = new Subject<ITourTypeSelect>();
+  private ticketUpdateSubject = new Subject<Array<ITour>>();
+  readonly ticketObservable = this.ticketSubject.asObservable();
+  readonly ticketUpdateObservable = this.ticketUpdateSubject.asObservable();
   constructor (private ticketServiceRest: TicketRestService) {}
   addLocation(data: Array<ITourUpcoming>, location: Array<ITourLocation>): Array<ITourUpcoming>
   {
@@ -21,6 +24,18 @@ export class TicketService
         item.locationName = value.name;
     });
     return data;
+  }
+  createTour(data: any): Observable<any>
+  {
+    return this.ticketServiceRest.createTour(data);
+  }
+  createTours(): void
+  {
+    this.ticketServiceRest.createTours().subscribe((data: Array<ITour>) => this.updateToursList(data));
+  }
+  deleteTours(): void
+  {
+    this.ticketServiceRest.deleteTours().subscribe((data: Object) => this.updateToursList([]));
   }
   getError(): Observable<any>
   {
@@ -34,28 +49,32 @@ export class TicketService
   {
     return this.ticketServiceRest.getRandomTour(type);
   }
-  getTickets(): Observable <Array<ITour>>
+  getTourById(id: string): Observable<ITour>
   {
-    return this.ticketServiceRest.getTours().pipe(map((data: Array<ITour>) =>
-    {
-        const singleTours: Array<ITour> = data.filter((el) => el.type === 'single');
-        return data.concat(singleTours);
-    }));
+    return this.ticketServiceRest.getTourById(id);
   }
-  getTicketType(): Observable <ITourTypeSelect>
+  getTours(): Observable <Array<ITour>>
   {
-    return this.ticketSubject.asObservable(); 
+    return this.ticketServiceRest.getTours();
+  }
+  getToursByName(name: string): Observable <Array<ITour>>
+  {
+    return this.ticketServiceRest.getToursByName(name);
   }
   getUpcomingTours(): Observable<Array<ITourUpcoming>>
   {
     return this.ticketServiceRest.getUpcomingTours();
   }
-  sendTicket(data: any): Observable<any>
+  sendOrder(data: any): Observable<any>
   {
     return this.ticketServiceRest.sendData(data);
   }
   updateTours(type: ITourTypeSelect): void
   {
     this.ticketSubject.next(type);
+  }
+  updateToursList(data: Array<ITour>): void
+  {
+    this.ticketUpdateSubject.next(data);
   }
 }

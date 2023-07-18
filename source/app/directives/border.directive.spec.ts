@@ -1,5 +1,4 @@
 import { ElementRef } from '@angular/core';
-
 import { BorderDirective } from './border.directive';
 
 describe('BorderDirective', () =>

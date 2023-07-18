@@ -13,7 +13,7 @@
         <div class = "d-flex flex-column justify-content-between m-2 p-2 tour"
          (click) = "openInfoPage(tour)" *ngFor = "let tour of tours">
             <div>{{tour.name}}</div>
-            <img alt = "picture" src = "./assets/images/{{tour.img}}">
+            <img alt = "picture" src = "{{tour.image}}">
         </div>
     </div>
 </div>

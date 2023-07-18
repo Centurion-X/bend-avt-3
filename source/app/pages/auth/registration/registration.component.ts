@@ -1,10 +1,12 @@
 // import from Angular framework
 import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 // import from PrimeNG library
 import { MessageService } from 'primeng/api';
 // import from application files
 import { AuthService } from '../../../services/auth/auth.service';
 import { ConfigurationService } from '../../../services/configuration/configuration.service';
+import { IServerError } from '../../../models/server';
 import { IUser } from '../../../models/interfaces';
 
 @Component
@@ -30,6 +32,7 @@ export class RegistrationComponent implements OnInit
   public showCard: boolean;
   public storage: boolean;
   constructor(private authService: AuthService,
+              private http: HttpClient,
               private messageService: MessageService){}
   ngOnInit(): void
   {
@@ -49,10 +52,17 @@ export class RegistrationComponent implements OnInit
       mail: this.mail,
       password: this.password1
     }
-    const status = this.authService.setUser(userObject, this.storage);
-    if (status)
-      this.messageService.add({detail: 'Регистрация нового пользователя завершена !', severity: 'success', summary: 'Операция выполнена'})
-    else
-      this.messageService.add({detail: 'Такой пользователь уже зарегистрирован !!!', severity: 'warn', summary: 'Невыполнимая операция'});
+    this.http.post<IUser>('http://localhost:3000/users/', userObject).subscribe(
+    (data: IUser) =>
+    {
+      const status = this.authService.setUser(userObject, this.storage);
+      if (status)
+        this.messageService.add({detail: 'Регистрация нового пользователя завершена !', severity: 'success', summary: 'Операция выполнена'});
+    },
+    (error: HttpErrorResponse) =>
+    {
+        const serverError: IServerError = error.error;
+        this.messageService.add({detail: serverError.text, severity: 'warn', summary: 'Невыполнимая операция'});
+    })
   }
 }

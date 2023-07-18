@@ -2,7 +2,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 // import from RxJS library
-import { debounceTime, fromEvent, Subscription } from 'rxjs';
+import { debounceTime, fromEvent, Subject, Subscription, takeUntil } from 'rxjs';
 // import from application files
 import { BorderDirective } from '../../../directives/border.directive';
 import { ITour, ITourTypeSelect } from '../../../models/interfaces';
@@ -24,18 +24,17 @@ export class MainComponent implements AfterViewInit, OnDestroy, OnInit
   @ViewChild(BorderDirective) borderDirective: BorderDirective;
   public currentSearch: string;
   public isRendered: boolean = false;
-  public tourSearchSubscription: Subscription;
   public tourSearchValue: string;
-  public tourSubscription: Subscription;
   public tours: Array<ITour>;
   public toursCopy: Array<ITour>;
+  private destroyer = new Subject();
   constructor(private router: Router,
               private ticketService: TicketService,
               private ticketStorage: StorageService){}
   ngAfterViewInit(): void
   {
     const observerFromEvent = fromEvent(this.tourSearch.nativeElement, "keyup");
-    this.tourSearchSubscription = observerFromEvent.pipe(debounceTime(100)).subscribe(event =>
+    observerFromEvent.pipe(debounceTime(100), takeUntil(this.destroyer)).subscribe(event =>
     {
       if (this.currentSearch !== this.tourSearchValue)
         this.renderBorder();
@@ -49,18 +48,20 @@ export class MainComponent implements AfterViewInit, OnDestroy, OnInit
   }
   ngOnDestroy(): void
   {
-    this.tourSearchSubscription.unsubscribe();
-    this.tourSubscription.unsubscribe();
+    this.destroyer.next(true);
+    this.destroyer.complete();
   }
   ngOnInit(): void
   {
-    this.ticketService.getTickets().subscribe((data: Array<ITour>) => 
+    this.ticketService.getTours().subscribe((data: Array<ITour>) =>
     {
-      this.tours = this.filterData(data);
+      this.tours = data;
       this.toursCopy = [...this.tours];
+      this.ticketService.updateToursList(data);
       this.ticketStorage.setData(this.tours);
     });
-    this.tourSubscription = this.ticketService.getTicketType().subscribe((data: ITourTypeSelect): void =>
+    this.ticketService.ticketUpdateObservable.pipe(takeUntil(this.destroyer)).subscribe((data: Array<ITour>) => this.tours = data);
+    this.ticketService.ticketObservable.pipe(takeUntil(this.destroyer)).subscribe((data: ITourTypeSelect): void =>
     {
       console.log('Фильтр: ', data);
       switch (data.value)
@@ -111,7 +112,7 @@ export class MainComponent implements AfterViewInit, OnDestroy, OnInit
   }
   openInfoPage(tour: ITour): void
   {
-    this.router.navigate(['/tickets/ticket/'], {queryParams: {id: tour.id}});
+    this.router.navigate(['/tickets/tour/'], {queryParams: {id: tour._id}});
   }
   renderBorder(): void
   {

@@ -1,6 +1,6 @@
 // import from Angular framework
 import { CalendarModule } from 'primeng/calendar';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 // import from PrimeNG library
@@ -40,7 +40,7 @@ import { TicketsRoutingModule } from './tickets-routing.module';
     TicketsRoutingModule,
     ToastModule
   ],
-  providers: [MessageService]
+  providers: [DatePipe, MessageService]
 })
 
 export class TicketsModule {}

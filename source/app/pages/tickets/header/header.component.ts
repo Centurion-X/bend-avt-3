@@ -16,7 +16,7 @@ import { UserService } from '../../../services/user/user.service';
 export class HeaderComponent implements OnChanges, OnDestroy, OnInit
 {
   @Input() menuType: IMenuType;
-  private settingsActive: boolean = false;
+  private settingsActive: boolean = true;
   private timeInterval: number;
   public items: Array<MenuItem>;
   public time: Date;
@@ -24,7 +24,8 @@ export class HeaderComponent implements OnChanges, OnDestroy, OnInit
   constructor(private userService: UserService){}
   ngOnChanges(changes: SimpleChanges): void
   {
-    this.settingsActive = this.menuType?.type === "extend";
+    if (this.menuType)
+      this.settingsActive = this.menuType.type === "extend";
     this.items = this.initMenuItems();
   }
   ngOnDestroy(): void

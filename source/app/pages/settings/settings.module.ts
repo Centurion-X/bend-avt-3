@@ -1,6 +1,6 @@
 // import from Angular framework
 import { CommonModule } from '@angular/common';
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgModule } from '@angular/core';
 // import from PrimeNG library
 import { InputTextModule} from 'primeng/inputtext';
@@ -9,6 +9,7 @@ import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
 // import from application files
+import { LoaderComponent } from './loader/loader.component';
 import { PasswordComponent } from './password/password.component';
 import { SettingsComponent } from './settings.component';
 import { SettingsRoutingModule } from './settings-routing.module';
@@ -18,6 +19,7 @@ import { StatisticComponent } from './statistic/statistic.component';
 ({
   declarations:
   [
+    LoaderComponent,
     PasswordComponent,
     SettingsComponent,
     StatisticComponent
@@ -27,6 +29,7 @@ import { StatisticComponent } from './statistic/statistic.component';
     CommonModule,
     FormsModule,
     InputTextModule,
+    ReactiveFormsModule,
     SettingsRoutingModule,
     TableModule,
     TabViewModule,

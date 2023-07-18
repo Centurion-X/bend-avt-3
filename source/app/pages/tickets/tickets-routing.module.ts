@@ -19,7 +19,7 @@ const routes: Routes =
       },
       {
         loadChildren: () => import('../info/info.module').then(m => m.InfoModule),
-        path: 'ticket'
+        path: 'tour'
     }],
     component: TicketsComponent,
     path: ''

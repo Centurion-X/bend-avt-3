@@ -17,7 +17,7 @@ export class InterceptionService implements HttpInterceptor
     console.log('Token: ', hasToken);
     if (hasToken)
     {
-      const clone = request.clone({headers: request.headers.set('Authorisation', 'User' + hasToken)});
+      const clone = request.clone({headers: request.headers.set('Authorization', 'Bearer ' + hasToken)});
       return next.handle(clone);
     }
     else

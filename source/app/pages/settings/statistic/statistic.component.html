@@ -1,4 +1,4 @@
-<p-table [value] = "users">
+<p-table [value] = "orders">
     <ng-template pTemplate = "header">
       <tr>
         <th *ngFor = "let column of columns">
@@ -6,10 +6,10 @@
         </th>
       </tr>
     </ng-template>
-    <ng-template let-user pTemplate = "body">
+    <ng-template let-order pTemplate = "body">
       <tr>
         <td *ngFor = "let column of columns">
-          {{user[column.field]}}
+          {{order[column.field]}}
         </td>
       </tr>
     </ng-template>

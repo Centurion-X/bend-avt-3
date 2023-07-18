@@ -2,10 +2,13 @@
 import { ActivatedRoute } from '@angular/router';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 // import from RxJS library
-import { forkJoin, fromEvent, Subscription } from 'rxjs';
+import { fromEvent, Subscription } from 'rxjs';
+// import from PrimeNG library
+import { MessageService } from 'primeng/api';
 // import from application files
-import { ITour, ITourLocation, ITourUpcoming, IUser } from '../../../models/interfaces';
+import { IOrder, ITour, ITourLocation, IUser } from '../../../models/interfaces';
 import { StorageService } from '../../../services/storage/storage.service';
 import { UserService } from '../../../services/user/user.service';
 import { TicketService } from '../../../services/ticket/ticket.service';
@@ -23,16 +26,28 @@ export class TicketComponent implements AfterViewInit, OnDestroy, OnInit
   public locations: Array<ITourLocation>;
   public ticketRestSubscription: Subscription;
   public ticketSearchSubscription: Subscription;
-  public ticketSearchValue: string;
   public tour: ITour | undefined;
-  public tours: Array<ITourUpcoming>;
-  public toursCopy: Array<ITourUpcoming>;
+  public tourSearchValue: string;
+  public tours: Array<ITour> = new Array;
+  public toursCopy: Array<ITour> = new Array;
   public user: IUser;
   @ViewChild('ticketSearch') ticketSearch: ElementRef;
   constructor(private route: ActivatedRoute,
+              private messageService: MessageService,
               private ticketService: TicketService,
               private ticketStorage: StorageService,
-              private userService: UserService){}
+              private userService: UserService)
+  {
+    const tours = this.ticketStorage.getData();
+    for (let index = 0; index < 10; index++)
+    {
+      if (tours && tours[index])
+      {
+        this.tours.push(tours[index]);
+        this.toursCopy.push(tours[index]);
+      }
+    }      
+  }
   ngAfterViewInit(): void
   {
     this.form.controls['cardNumber'].setValue(this.user?.card);
@@ -55,45 +70,58 @@ export class TicketComponent implements AfterViewInit, OnDestroy, OnInit
     ({
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),
+      age: new FormControl(),
       birthDay: new FormControl(),
-      cardNumber: new FormControl(),
-      citizenship: new FormControl()
+      cardNumber: new FormControl()
     });
     this.user = this.userService.getUser();
     if (valueId)
     {
       const ticketStorage = this.ticketStorage.getData();
       if (ticketStorage)
-        this.tour = ticketStorage.find(tour => tour.id === valueId);
+        this.tour = ticketStorage.find(tour => tour._id === valueId);
     }
-    forkJoin([this.ticketService.getUpcomingTours(), this.ticketService.getLocations()]).subscribe(data =>
-    {
-      this.locations = data[1];
-      this.tours = this.ticketService.addLocation(data[0], data[1]);
-      this.toursCopy = this.tours;
-    });
   }
   initSearchTour(): void
   {
-    const type = Math.ceil(Math.random() * 3);
     if (this.ticketRestSubscription && !this.ticketSearchSubscription.closed)
       this.ticketRestSubscription.unsubscribe();
-    this.ticketRestSubscription = this.ticketService.getRandomTour(type).subscribe((data: any) =>
-    {
-      if (this.ticketSearchValue)
-        this.tours = this.ticketService.addLocation([data], this.locations);
-      else
-        this.tours = this.toursCopy;
-    })    
+    if (this.tourSearchValue.length > 1)
+      this.ticketRestSubscription = this.ticketService.getToursByName(this.tourSearchValue.trim()).subscribe
+      ({
+        next: (data: Array<ITour>) => this.tours = data,
+        error: (error: HttpErrorResponse) => this.tours = this.toursCopy
+      })
+    else
+      this.tours = this.toursCopy;
   }
   initTour(): void
   {
-    const userData = this.form.getRawValue(),
-          postData = {...this.tour, ...userData};
-    console.log('Data:', postData);
-    console.log(userData);
-    this.ticketService.sendTicket(postData).subscribe();
+    const formData = this.form.getRawValue(),
+          orderData = {...this.tour, ...formData};
+    console.log('Data:', formData);
+    console.log('Order:', orderData);
+    const userId = this.userService.getUser()?._id || null,
+          userOrder: IOrder =
+          {
+            age: orderData.age,
+            birthDay: orderData.birthDay,
+            cardNumber: orderData.cardNumber,
+            firstName: orderData.firstName,
+            lastName: orderData.lastName,
+            tourId: orderData._id,
+            userId: userId
+          };
+    this.ticketService.sendOrder(userOrder).subscribe
+    ({
+      next: data => this.messageService.add({detail: 'Заказ оформлен !', severity: 'success', summary: 'Операция выполнена'})
+    });
   }
   onSubmit(): void {}
-  selectDate(event: Date): void {}
+  selectDate(event: Date): void
+  {
+    const today = new Date(),
+          age = today.getFullYear() - event.getFullYear();
+    this.form.controls['age'].setValue(age);
+  }
 }
